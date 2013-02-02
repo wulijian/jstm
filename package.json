@@ -1,0 +1,24 @@
+{
+    "name": "jstm",
+    "title": "jstm",
+    "description": "Javascript template manager",
+    "version": "0.0.1",
+    "homepage": "",
+    "author": {
+        "name": "KnightWu"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/wulijian/jstm.git"
+    },
+    "bugs": {
+        "url": "XXX"
+    },
+    "dependencies": {
+        "uglify-js": "latest",
+        "velocityjs": "latest",
+        "ktemplate": "latest",
+        "hogan.js": "latest"
+    },
+    "keywords": ["template", "package", "nodejs", "javascript", "模板", "管理"]
+}
