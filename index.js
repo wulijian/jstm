@@ -89,6 +89,20 @@ var compile = function (filePath, tp) {
     return tp.compile(filePath, dataProgress);
 };
 
+/**
+ * 根据 './lib/helper/tpHelper.html' 模版，更新模版辅助模块的枢纽模块代码
+ * @param tps 所有使用到的模版模块
+ * @param to 写到这个目录
+ */
+var updateTpHelper = function (tps, to) {
+    var tpHelperCode = compile(path.resolve(__dirname, './lib/helper/tpHelperTpl.js'), require('ktemplate'));
+    var helperPath = path.resolve(__dirname, path.dirname(to) || './lib/helper/', './tpHelper.js');
+    fs.writeFileSync(
+        helperPath,
+        tpHelperCode(tps)
+    );
+};
+
 module.exports = {
     loadPlugins: loadPlugins,
     /**
@@ -101,6 +115,8 @@ module.exports = {
      * @param to  the file update to {to} dir
      */
     updatePluginExternalApi: function (to) {
+        console.log('Update plugins begin...');
+        var allTemplateHelper = [];
         var tpPath = function (type, modules) {
             var modulePath = '';
             modules.forEach(function (mobj) {
@@ -111,6 +127,10 @@ module.exports = {
             return modulePath;
         };
         var allPlugins = templatePlugin.all();
+        var relPath = path.resolve(__dirname, to || './lib/helper/tpHelper/');
+        if (!fs.existsSync(relPath)) {
+            fs.mkdirSync(relPath);
+        }
         for (var type in allPlugins) {
             if (allPlugins.hasOwnProperty(type) && allPlugins[type].update !== null) {
                 var plugin = allPlugins[type];
@@ -118,10 +138,12 @@ module.exports = {
                     continue;
                 }
                 var code = plugin.update(tpPath.bind(undefined, plugin.tpName));
-                fs.writeFileSync(path.resolve(__dirname, to || './tptools/', './' + type + '.js'), code);
-                console.log('Update ' + type + '.js success.');
+                fs.writeFileSync(path.resolve(relPath, './' + type + '.js'), code);
+                console.log('        Update ' + type + '.js success.');
+                allTemplateHelper.push({id: type, relPath: './' + path.basename(relPath) });
             }
         }
+        updateTpHelper(allTemplateHelper, to);
     },
     /**
      * 当前模版生成 sourceMap
