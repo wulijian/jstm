@@ -7,6 +7,7 @@
 var fs = require('fs');
 var path = require('path');
 var uglify = require('uglify-js');
+var localStorage = require('./lib/localStorage');
 var templatePlugin = require('./lib/templatePlugin');
 var currentTemplatePlugin = null;
 
@@ -86,7 +87,7 @@ var compile = function (filePath, tp) {
     }
     var dataProgress = extendDataProgressToData(filePath);
     currentTemplatePlugin = tp;
-    return tp.compile(filePath, dataProgress);
+    return tp.compile(filePath, dataProgress, localStorage.db('helperName'));
 };
 
 /**
@@ -128,6 +129,7 @@ module.exports = {
         };
         var allPlugins = templatePlugin.all();
         var relPath = path.resolve(__dirname, to || './lib/helper/tpHelper/');
+        var helperName = path.basename(relPath);
         if (!fs.existsSync(relPath)) {
             fs.mkdirSync(relPath);
         }
@@ -140,9 +142,11 @@ module.exports = {
                 var code = plugin.update(tpPath.bind(undefined, plugin.tpName));
                 fs.writeFileSync(path.resolve(relPath, './' + type + '.js'), code);
                 console.log('        Update ' + type + '.js success.');
-                allTemplateHelper.push({id: type, relPath: './' + path.basename(relPath) });
+                allTemplateHelper.push({id: type, relPath: './' + helperName });
             }
         }
+        localStorage.db('allTemplate', allTemplateHelper);
+        localStorage.db('helperName', helperName);
         updateTpHelper(allTemplateHelper, to);
     },
     /**
