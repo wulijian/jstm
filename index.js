@@ -140,7 +140,6 @@ module.exports = {
         var suffix = suffixReg.exec(templatePath)[1];
         var tp = templatePlugin.all()[suffix];
         var renderFunctionStr = compile(templatePath, tp);
-        console.log(renderFunctionStr);
         return new Function('_data', getCodeInFunction(renderFunctionStr));
     },
     /**
