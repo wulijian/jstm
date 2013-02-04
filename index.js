@@ -102,10 +102,22 @@ module.exports = {
      * @param to  the file update to {to} dir
      */
     updatePluginExternalApi: function (to) {
+        var tpPath = function (type, modules) {
+            var modulePath = '';
+            modules.forEach(function (mobj) {
+                if (mobj.id.indexOf(type) !== -1) {
+                    modulePath = path.dirname(mobj.id);
+                }
+            });
+            return modulePath;
+        };
         var allPlugins = templatePlugin.all();
         for (var type in allPlugins) {
             if (allPlugins.hasOwnProperty(type) && allPlugins[type].update !== null) {
-                allPlugins[type].update(to);
+                var plugin = allPlugins[type];
+                var code = plugin.update(tpPath.bind(undefined, plugin.tpName));
+                fs.writeFileSync(path.resolve(__dirname, to || './tptools/', './' + type + '.js'), code);
+                console.log('Update ' + type + '.js success.');
             }
         }
     },
@@ -128,6 +140,7 @@ module.exports = {
         var suffix = suffixReg.exec(templatePath)[1];
         var tp = templatePlugin.all()[suffix];
         var renderFunctionStr = compile(templatePath, tp);
+        console.log(renderFunctionStr);
         return new Function('_data', getCodeInFunction(renderFunctionStr));
     },
     /**
