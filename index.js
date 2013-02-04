@@ -3,7 +3,7 @@
  * @describe: 管理所有模版的模块
  * 可通过add方法添加模版支持，其中compile部分为预编译阶段，update为更新模版的渲染模块到项目的lib中
  * @author: KnightWu
- * @version: 1.0
+ * @version: 0.0.1
  */
 var fs = require('fs');
 var path = require('path');
@@ -37,11 +37,15 @@ loadPlugins(path.resolve(__dirname, './lib/plugins')); //默认加载 todo:以�
 
 /**
  * 获取uglify函数对象中的所有语句
- * @param funObj
+ * @param func
  * @return {string}
  */
-var getCodeInFunction = function (funObj) {
-    var codeArr = funObj.body[0].body;
+var getCodeInFunction = function (func) {
+    var funcObj = func;
+    if (!(func instanceof uglify.AST_Node)) {
+        funcObj = uglify.parse(func);
+    }
+    var codeArr = funcObj.body[0].body;
     var code = '';
     for (var idx = 0; idx < codeArr.length; idx++) {
         code += codeArr[idx].print_to_string() + ';';
@@ -123,8 +127,8 @@ module.exports = {
         var suffixReg = /.*\.(.*$)/g;
         var suffix = suffixReg.exec(templatePath)[1];
         var tp = templatePlugin.all()[suffix];
-        var render = compile(templatePath, tp);
-        return new Function('_data', getCodeInFunction(render));
+        var renderFunctionStr = compile(templatePath, tp);
+        return new Function('_data', getCodeInFunction(renderFunctionStr));
     },
     /**
      * 解析模版语句，适用于Module模块的生成，自动匹配模版
