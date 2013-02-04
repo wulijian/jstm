@@ -3,7 +3,6 @@
  * @describe: 管理所有模版的模块
  * 可通过add方法添加模版支持，其中compile部分为预编译阶段，update为更新模版的渲染模块到项目的lib中
  * @author: KnightWu
- * @version: 0.0.1
  */
 var fs = require('fs');
 var path = require('path');
@@ -115,6 +114,9 @@ module.exports = {
         for (var type in allPlugins) {
             if (allPlugins.hasOwnProperty(type) && allPlugins[type].update !== null) {
                 var plugin = allPlugins[type];
+                if (typeof plugin === 'undefined' || typeof plugin.update === 'undefined') {
+                    continue;
+                }
                 var code = plugin.update(tpPath.bind(undefined, plugin.tpName));
                 fs.writeFileSync(path.resolve(__dirname, to || './tptools/', './' + type + '.js'), code);
                 console.log('Update ' + type + '.js success.');
