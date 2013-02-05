@@ -18,7 +18,6 @@
         "uglify-js": "latest",
         "ktemplate": "latest",
         "jade": "latest",
-        "handlebars": "latest",
         "hogan.js": "latest",
         "velocityjs": "latest"
     },
