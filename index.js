@@ -1,6 +1,7 @@
 /**
  * @date 13-1-16
  * @describe: 管理所有模版的模块
+ * todo:解决模版本身的配置问题
  * 可通过add方法添加模版支持，其中compile部分为预编译阶段，update为更新模版的渲染模块到项目的lib中
  * @author: KnightWu
  */
@@ -70,7 +71,7 @@ var extendDataProgressToData = function (realPath) {
         fragment = uglify.parse(dataProgress).body[0].body.right.print_to_string();
     } catch (err) {
     }
-    fragment = (fragment === '{}') ? '' : '_data = tools.mixin(_data,' + fragment + ');';
+    fragment = (fragment === '{}') ? '' : '_data = ' + fetchData('helperName').val || 'tpHelper' + '.mixin(_data,' + fragment + ');';
     return fragment;
 };
 

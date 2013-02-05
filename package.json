@@ -2,7 +2,7 @@
     "name": "jstm",
     "title": "jstm",
     "description": "Javascript template manager",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "homepage": "",
     "author": {
         "name": "KnightWu"
@@ -16,9 +16,11 @@
     },
     "dependencies": {
         "uglify-js": "latest",
-        "velocityjs": "latest",
         "ktemplate": "latest",
-        "hogan.js": "latest"
+        "jade": "latest",
+        "handlebars": "latest",
+        "hogan.js": "latest",
+        "velocityjs": "latest"
     },
     "keywords": ["template", "package", "nodejs", "javascript", "模板", "管理"]
 }
