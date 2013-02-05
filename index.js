@@ -7,7 +7,7 @@
 var fs = require('fs');
 var path = require('path');
 var uglify = require('uglify-js');
-var localStorage = require('./lib/localStorage');
+var fetchData = require('./lib/fetchData');
 var templatePlugin = require('./lib/templatePlugin');
 var currentTemplatePlugin = null;
 
@@ -87,7 +87,7 @@ var compile = function (filePath, tp) {
     }
     var dataProgress = extendDataProgressToData(filePath);
     currentTemplatePlugin = tp;
-    return tp.compile(filePath, dataProgress, localStorage.db('helperName'));
+    return tp.compile(filePath, dataProgress, fetchData('helperName').val);
 };
 
 /**
@@ -115,7 +115,7 @@ module.exports = {
      * update all plugins that will be used in the project lib for template render.
      * @param to  the file update to {to} dir
      */
-    updatePluginExternalApi: function (to) {
+    updateHelper: function (to) {
         console.log('Update plugins begin...');
         var allTemplateHelper = [];
         var tpPath = function (type, modules) {
@@ -145,8 +145,8 @@ module.exports = {
                 allTemplateHelper.push({id: type, relPath: './' + helperName });
             }
         }
-        localStorage.db('allTemplate', allTemplateHelper);
-        localStorage.db('helperName', helperName);
+        fetchData('allTemplate').store = allTemplateHelper;
+        fetchData('helperName').store = helperName;
         updateTpHelper(allTemplateHelper, to);
     },
     /**
@@ -160,6 +160,7 @@ module.exports = {
     },
     /**
      * 解析模版语句
+     * todo:支持str的compile
      * @param templatePath 模版路径
      * @return {Function} 返回解析后的函数
      */
@@ -168,19 +169,20 @@ module.exports = {
         var suffix = suffixReg.exec(templatePath)[1];
         var tp = templatePlugin.all()[suffix];
         var renderFunctionStr = compile(templatePath, tp);
+        fetchData('usedTemplates').mixin(JSON.parse('{"' + suffix + '": true}'));
         return new Function('_data', getCodeInFunction(renderFunctionStr));
     },
     /**
-     * 解析模版语句，适用于Module模块的生成，自动匹配模版
+     * 解析模版语句, 自动匹配模版
      * @param templateDir 模版文件夹路径
+     * @param fileName 模版文件名称（不包括后缀）
      * @return {null} 返回解析后的对象
      */
-    compileModule: function (templateDir) {
-        var TEMPLATENAME = 'm';  //主模版名称
+    compileAdaptive: function (templateDir, fileName) {
         var render = null;
         var allPlugins = templatePlugin.all();
         for (var suffix in allPlugins) {
-            var realPath = templateDir + '/' + TEMPLATENAME + '.' + suffix;
+            var realPath = templateDir + '/' + fileName + '.' + suffix;
             if (allPlugins.hasOwnProperty(suffix) && fs.existsSync(realPath)) {
                 render = compile(realPath, allPlugins[suffix]);
             }
