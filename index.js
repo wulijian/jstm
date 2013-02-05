@@ -71,7 +71,7 @@ var extendDataProgressToData = function (realPath) {
         fragment = uglify.parse(dataProgress).body[0].body.right.print_to_string();
     } catch (err) {
     }
-    fragment = (fragment === '{}') ? '' : '_data = ' + fetchData('helperName').val || 'tpHelper' + '.mixin(_data,' + fragment + ');';
+    fragment = (fragment === '{}') ? '' : '_data = ' + (fetchData('helperName').val || 'tpHelper') + '.mixin(_data,' + fragment + ');';
     return fragment;
 };
 
