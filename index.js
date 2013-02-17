@@ -38,7 +38,6 @@ loadPlugins(path.resolve(__dirname, './lib/plugins')); //默认加载 todo:以�
 
 /**
  * 获取uglify函数对象中的所有语句  todo:应该采用更加简单的正则处理字符串的方式，使用uglify函数越大，效率越低
- *
  * @param func
  * @return {string}
  */
