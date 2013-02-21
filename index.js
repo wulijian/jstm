@@ -163,11 +163,12 @@ module.exports = {
      * 解析模版语句
      * todo:支持str的compile
      * @param templatePath 模版路径
+     * @param plugin 指定插件名称
      * @return {Function} 返回解析后的函数
      */
-    compile: function (templatePath) {
+    compile: function (templatePath, plugin) {
         var suffixReg = /.*\.(.*$)/g;
-        var suffix = suffixReg.exec(templatePath)[1];
+        var suffix = plugin || suffixReg.exec(templatePath)[1];
         var tp = templatePlugin.all()[suffix];
         var renderFunctionStr = compile(templatePath, tp);
         fetchData('usedTemplates').mixin(JSON.parse('{"' + suffix + '": true}'));
