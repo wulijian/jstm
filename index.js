@@ -170,6 +170,9 @@ module.exports = {
         var suffixReg = /.*\.(.*$)/g;
         var suffix = plugin || suffixReg.exec(templatePath)[1];
         var tp = templatePlugin.all()[suffix];
+        if (typeof tp === 'undefined') {
+            throw "Don't support the template plugin type: [" + suffix + ']';
+        }
         var renderFunctionStr = compile(templatePath, tp);
         fetchData('usedTemplates').mixin(JSON.parse('{"' + suffix + '": true}'));
         return new Function('_data', getCodeInFunction(renderFunctionStr));
