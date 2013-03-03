@@ -88,7 +88,7 @@ var compile = function (filePath, tp) {
     }
     var dataProgress = extendDataProgressToData(filePath);
     currentTemplatePlugin = tp;
-    return tp.compile(filePath, dataProgress, fetchData('helperName').val);
+    return tp.compile(filePath, dataProgress, fetchData('helperName').val||'tpHelper');
 };
 
 /**
