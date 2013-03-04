@@ -88,7 +88,7 @@ var compile = function (filePath, tp) {
     }
     var dataProgress = extendDataProgressToData(filePath);
     currentTemplatePlugin = tp;
-    return tp.compile(filePath, dataProgress, fetchData('helperName').val);
+    return tp.compile(filePath, dataProgress, fetchData('helperName').val||'tpHelper');
 };
 
 /**
@@ -172,6 +172,9 @@ module.exports = {
         var tp = templatePlugin.all()[suffix];
         if (typeof tp === 'undefined') {
             throw "Don't support the template plugin type: [" + suffix + ']';
+        }
+        if (typeof tp === 'undefined') {
+            throw "Don't have the plugin : " + suffix;
         }
         var renderFunctionStr = compile(templatePath, tp);
         fetchData('usedTemplates').mixin(JSON.parse('{"' + suffix + '": true}'));
