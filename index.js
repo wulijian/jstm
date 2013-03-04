@@ -173,9 +173,6 @@ module.exports = {
         if (typeof tp === 'undefined') {
             throw "Don't support the template plugin type: [" + suffix + ']';
         }
-        if (typeof tp === 'undefined') {
-            throw "Don't have the plugin : " + suffix;
-        }
         var renderFunctionStr = compile(templatePath, tp);
         fetchData('usedTemplates').mixin(JSON.parse('{"' + suffix + '": true}'));
         return new Function('_data', getCodeInFunction(renderFunctionStr));
