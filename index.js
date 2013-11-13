@@ -193,5 +193,8 @@ module.exports = {
             }
         }
         return render;
+    },
+    getTp:function(suffix){
+        return templatePlugin.all()[suffix].tp;
     }
 };
