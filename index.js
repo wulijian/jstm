@@ -88,7 +88,7 @@ var compile = function (filePath, tp) {
     }
     var dataProgress = extendDataProgressToData(filePath);
     currentTemplatePlugin = tp;
-    return tp.compile(filePath, dataProgress, fetchData('helperName').val||'tpHelper');
+    return tp.compile(filePath, dataProgress, fetchData('helperName').val || 'tpHelper');
 };
 
 /**
@@ -194,7 +194,10 @@ module.exports = {
         }
         return render;
     },
-    getTp:function(suffix){
+    getTp: function (suffix) {
         return templatePlugin.all()[suffix].tp;
+    },
+    getSupportedSuffix: function () {
+        return Object.keys(templatePlugin.all());
     }
 };
