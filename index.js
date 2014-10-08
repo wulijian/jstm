@@ -12,6 +12,8 @@ var fetchData = require('./lib/fetchData');
 var templatePlugin = require('./lib/templatePlugin');
 var currentTemplatePlugin = null;
 
+var helperContext = '___kkit___.tph';
+
 /**
  * 加载所有插件
  * @param pluginsPath
@@ -71,7 +73,7 @@ var extendDataProgressToData = function (realPath) {
         fragment = uglify.parse(dataProgress).body[0].body.right.print_to_string();
     } catch (err) {
     }
-    fragment = (fragment === '{}') ? '' : '_data = ' + (fetchData('helperName').val || 'tpHelper') + '.mixin(_data,' + fragment + ');';
+    fragment = (fragment === '{}') ? '' : '_data = ' + (fetchData('helperName').val || helperContext) + '.mixin(_data,' + fragment + ');';
     return fragment;
 };
 
@@ -88,7 +90,7 @@ var compile = function (filePath, tp) {
     }
     var dataProgress = extendDataProgressToData(filePath);
     currentTemplatePlugin = tp;
-    return tp.compile(filePath, dataProgress, fetchData('helperName').val || 'tpHelper');
+    return tp.compile(filePath, dataProgress, fetchData('helperName').val || helperContext);
 };
 
 /**
