@@ -12,7 +12,7 @@ var fetchData = require('./lib/fetchData');
 var templatePlugin = require('./lib/templatePlugin');
 var currentTemplatePlugin = null;
 
-var helperContext = '___kkit___.tph';
+var helperContext = '((typeof ___kkit___ !== "undefined" ) ? ___kkit___.tph : tpHelper)';
 
 /**
  * 加载所有插件
