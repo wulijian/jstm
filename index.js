@@ -61,7 +61,7 @@ var getCodeInFunction = function (func) {
  * @param realPath
  * @return {*}
  */
-var extendDataProgressToData = function (realPath) {
+var extendDataProgressToData = function (realPath, isEs6) {
     var templateDir = path.dirname(realPath);
     var dataProgress = null;
     try {
@@ -69,28 +69,35 @@ var extendDataProgressToData = function (realPath) {
     } catch (e) {
     }
     var fragment = '{}';
-    try {
-        fragment = uglify.parse(dataProgress).body[0].body.right.print_to_string();
-    } catch (err) {
+
+    if (isEs6) {
+        fragment = dataProgress.replace(/^[\s]*module\.exports[\s]*=[\s]*/, '').replace(/;[\s]*$/, '');
+    } else {
+        try {
+            fragment = uglify.parse(dataProgress).body[0].body.right.print_to_string();
+        } catch (err) {
+        }
     }
     fragment = (fragment === '{}') ? '' : '_data = ' + (fetchData('helperName').val || helperContext) + '.mixin(_data,' + fragment + ');';
     return fragment;
 };
 
+
 /**
  * 读出文件，根据后缀调用不同方法生成模版
  * @param filePath 模板文件路径
  * @param tp  后缀
+ * @param isEs6  模板是否支持es6
  * @return {null}
  */
-var compile = function (filePath, tp) {
+var compile = function (filePath, tp, isEs6) {
     var sourceCode = fs.readFileSync(filePath, 'utf-8');
     if (sourceCode.trim() === '') {
         throw new Error('The template [' + filePath + '] is empty');
     }
-    var dataProgress = extendDataProgressToData(filePath);
+    var dataProgress = extendDataProgressToData(filePath, isEs6);
     currentTemplatePlugin = tp;
-    return tp.compile(filePath, dataProgress, fetchData('helperName').val || helperContext);
+    return tp.compile(filePath, dataProgress, fetchData('helperName').val || helperContext, isEs6);
 };
 
 /**
@@ -145,7 +152,7 @@ module.exports = {
                 var code = plugin.update(tpPath.bind(undefined, plugin.tpName));
                 fs.writeFileSync(path.resolve(relPath, './' + type + '.js'), code);
                 console.log('        Update ' + type + '.js success.');
-                allTemplateHelper.push({id: type, relPath: './' + helperName });
+                allTemplateHelper.push({id: type, relPath: './' + helperName});
             }
         }
         fetchData('allTemplate').store = allTemplateHelper;
@@ -183,15 +190,16 @@ module.exports = {
      * 解析模版语句, 自动匹配模版
      * @param templateDir 模版文件夹路径
      * @param fileName 模版文件名称（不包括后缀）
+     * @param isEs6 是否适配es6模式 仅支持ktemplate
      * @return {null} 返回解析后的对象
      */
-    compileAdaptive: function (templateDir, fileName) {
+    compileAdaptive: function (templateDir, fileName, isEs6) {
         var render = null;
         var allPlugins = templatePlugin.all();
         for (var suffix in allPlugins) {
             var realPath = templateDir + '/' + fileName + '.' + suffix;
             if (allPlugins.hasOwnProperty(suffix) && fs.existsSync(realPath)) {
-                render = compile(realPath, allPlugins[suffix]);
+                render = compile(realPath, allPlugins[suffix], isEs6);
             }
         }
         return render;
