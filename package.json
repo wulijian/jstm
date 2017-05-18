@@ -2,7 +2,7 @@
     "name": "jstm",
     "title": "jstm",
     "description": "Javascript template manager",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "homepage": "",
     "author": {
         "name": "KnightWu"
@@ -15,7 +15,7 @@
         "url": "XXX"
     },
     "dependencies": {
-        "uglify-js": "latest",
+        "uglify-js": "2.6.4",
         "ktemplate": "latest",
         "jade": "latest",
         "mocha": "latest",
